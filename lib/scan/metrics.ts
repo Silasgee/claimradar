@@ -1,3 +1,4 @@
+import { DurationAccumulator, type DurationStats } from "@/lib/metrics/duration";
 import { ConnectorRunStatus, ScanStatus } from "@/types";
 
 /**
@@ -12,20 +13,7 @@ import { ConnectorRunStatus, ScanStatus } from "@/types";
  * not analytics.
  */
 
-export interface DurationStats {
-  count: number;
-  totalMs: number;
-  minMs: number;
-  maxMs: number;
-  avgMs: number;
-}
-
-interface DurationAccumulator {
-  count: number;
-  totalMs: number;
-  minMs: number;
-  maxMs: number;
-}
+export type { DurationStats };
 
 interface ConnectorStats {
   runs: number;
@@ -56,13 +44,6 @@ export interface MetricsSnapshot {
   >;
 }
 
-const emptyDuration = (): DurationAccumulator => ({
-  count: 0,
-  totalMs: 0,
-  minMs: Number.POSITIVE_INFINITY,
-  maxMs: 0,
-});
-
 const emptyRunStatuses = (): Record<ConnectorRunStatus, number> => ({
   [ConnectorRunStatus.SUCCESS]: 0,
   [ConnectorRunStatus.FAILED]: 0,
@@ -78,35 +59,18 @@ const emptyScanStatuses = (): Record<ScanStatus, number> => ({
   [ScanStatus.FAILED]: 0,
 });
 
-function observe(acc: DurationAccumulator, ms: number): void {
-  acc.count++;
-  acc.totalMs += ms;
-  acc.minMs = Math.min(acc.minMs, ms);
-  acc.maxMs = Math.max(acc.maxMs, ms);
-}
-
-function finalize(acc: DurationAccumulator): DurationStats {
-  return {
-    count: acc.count,
-    totalMs: Math.round(acc.totalMs),
-    minMs: acc.count === 0 ? 0 : Math.round(acc.minMs),
-    maxMs: Math.round(acc.maxMs),
-    avgMs: acc.count === 0 ? 0 : Math.round(acc.totalMs / acc.count),
-  };
-}
-
 export class ScanMetrics {
   private scanTotal = 0;
   private scanByStatus = emptyScanStatuses();
   private claimablesFound = 0;
-  private scanDuration = emptyDuration();
+  private scanDuration = new DurationAccumulator();
   private connectors = new Map<string, ConnectorStats>();
 
   recordScan(status: ScanStatus, durationMs: number, claimablesFound: number): void {
     this.scanTotal++;
     this.scanByStatus[status]++;
     this.claimablesFound += claimablesFound;
-    observe(this.scanDuration, durationMs);
+    this.scanDuration.observe(durationMs);
   }
 
   recordConnectorRun(
@@ -119,7 +83,7 @@ export class ScanMetrics {
     stats.runs++;
     stats.byStatus[status]++;
     stats.retries += Math.max(0, attempts - 1);
-    observe(stats.duration, durationMs);
+    stats.duration.observe(durationMs);
   }
 
   recordDroppedClaimables(connectorId: string, count: number): void {
@@ -135,7 +99,7 @@ export class ScanMetrics {
         successRate: stats.runs === 0 ? 1 : stats.byStatus[ConnectorRunStatus.SUCCESS] / stats.runs,
         retries: stats.retries,
         droppedClaimables: stats.droppedClaimables,
-        duration: finalize(stats.duration),
+        duration: stats.duration.snapshot(),
       };
     }
     return {
@@ -143,7 +107,7 @@ export class ScanMetrics {
         total: this.scanTotal,
         byStatus: { ...this.scanByStatus },
         claimablesFound: this.claimablesFound,
-        duration: finalize(this.scanDuration),
+        duration: this.scanDuration.snapshot(),
       },
       connectors,
     };
@@ -153,7 +117,7 @@ export class ScanMetrics {
     this.scanTotal = 0;
     this.scanByStatus = emptyScanStatuses();
     this.claimablesFound = 0;
-    this.scanDuration = emptyDuration();
+    this.scanDuration.reset();
     this.connectors.clear();
   }
 
@@ -165,7 +129,7 @@ export class ScanMetrics {
         byStatus: emptyRunStatuses(),
         retries: 0,
         droppedClaimables: 0,
-        duration: emptyDuration(),
+        duration: new DurationAccumulator(),
       };
       this.connectors.set(connectorId, stats);
     }

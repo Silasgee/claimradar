@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { getEnv } from "@/config/env";
+import { discoveryMetrics } from "@/lib/discovery";
 import { createApiHandler } from "@/lib/api/handler";
 import { scanMetrics } from "@/lib/scan";
 
 /**
- * Internal-only metrics snapshot (scan + connector counters and durations).
+ * Internal-only metrics snapshot: Scan Engine and Discovery Engine counters
+ * and durations, namespaced under `scan` and `discovery`.
  *
  * Not part of the public API surface:
  * - outside production it is always served (local/dev/preview debugging);
@@ -28,6 +30,7 @@ export const GET = createApiHandler("internal-metrics", async () => {
   return NextResponse.json({
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.round(process.uptime()),
-    ...scanMetrics.snapshot(),
+    scan: scanMetrics.snapshot(),
+    discovery: discoveryMetrics.snapshot(),
   });
 });

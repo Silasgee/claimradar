@@ -5,7 +5,12 @@
  * internal files.
  */
 export { ConnectorRuntime, DEFAULT_RUNTIME_OPTIONS } from "./connector-runtime";
-export type { ConnectorRunResult, ConnectorRuntimeOptions } from "./connector-runtime";
+export type {
+  ConnectorRunResult,
+  ConnectorRuntimeOptions,
+  IsolatedRunResult,
+  RunOptions,
+} from "./connector-runtime";
 export { mapWithConcurrency } from "./concurrency";
 export { ScanMetrics, scanMetrics } from "./metrics";
 export type { MetricsSnapshot } from "./metrics";

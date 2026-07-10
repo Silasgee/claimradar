@@ -7,12 +7,18 @@ wallet address and the platform checks multiple chains and protocols for unclaim
 airdrops, claimable staking rewards, vesting schedules, presale allocations, governance
 rewards, NFT claims, refunds, and other forgotten on-chain assets.
 
-**Current state: Milestone 2 — first production connector.** Foundation (M0), the Claim
-Scan Engine (M1), and now the Ethereum connector: native ETH + curated ERC-20 balances
-read from mainnet via viem through the Chain Access Layer, fully covered by mocked-RPC
-integration tests. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the blueprint,
-[docs/SCAN-ENGINE.md](docs/SCAN-ENGINE.md) for the engine, and
-[docs/CHAIN-ACCESS.md](docs/CHAIN-ACCESS.md) for how connectors query chains.
+**Current state: Milestone 3 — Discovery Engine.** Foundation (M0), the Claim Scan Engine
+(M1), the Ethereum connector (M2), and now the **Discovery Engine**: a discovery-connector
+SDK, the canonical `Claim` model with stable ids, deterministic ranking, claim-URL security,
+and a first production discovery connector (a Merkle Distributor airdrop) — all proven with
+mocked-transport tests. See the blueprint and engine docs:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — full technical blueprint
+- [docs/DISCOVERY_ENGINE.md](docs/DISCOVERY_ENGINE.md) — the Discovery Engine (heart of the product)
+- [docs/CLAIM_MODEL.md](docs/CLAIM_MODEL.md) — the canonical Claim specification
+- [docs/CONNECTOR_SDK.md](docs/CONNECTOR_SDK.md) — the permanent discovery-connector contract
+- [docs/SCAN-ENGINE.md](docs/SCAN-ENGINE.md) — the isolated-execution engine
+- [docs/CHAIN-ACCESS.md](docs/CHAIN-ACCESS.md) — how connectors query chains
 
 ---
 
@@ -59,6 +65,7 @@ components/ui/      # shadcn/ui components
 config/             # environment validation (zod) — the only place process.env is read
 connectors/         # Connector SDK: interface, context, errors, registry + connectors
   ethereum/         # EthereumConnector: native ETH + curated ERC-20 balances (viem)
+  discovery/        # discovery connectors (business logic): merkle-distributor
   mock/             # deterministic MockConnector (tests only)
 db/                 # Prisma client singleton (+ generated client, gitignored)
 docs/               # architecture blueprint and technical docs
@@ -66,8 +73,10 @@ lib/                # shared infrastructure
   api/              # route handler wrapper (request id, logging, error mapping)
   cache/            # CacheStore abstraction + Redis/in-memory implementations
   chain/            # Chain Access Layer: provider-abstracted viem clients
+  discovery/        # Discovery Engine: SDK, claim model, ranking, security, metrics
   errors/           # typed AppError hierarchy
   logger.ts         # structured pino logging
+  metrics/          # shared duration-stats primitive
   scan/             # Claim Scan Engine: ScanService, ConnectorRuntime, metrics
 prisma/             # schema + migrations
 tests/              # unit tests (Vitest)

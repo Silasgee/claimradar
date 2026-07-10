@@ -1,8 +1,9 @@
 # ClaimRadar — agent notes
 
-Read-only Web3 platform for discovering claimable assets by wallet address.
-Milestones 0 (foundation), 1 (scan engine), and 2 (Ethereum connector) are
-complete. Ethereum mainnet reads go through the Chain Access Layer.
+Read-only Web3 platform for discovering forgotten/unclaimed on-chain assets by
+wallet address. It is NOT a portfolio tracker — optimize for claim discovery.
+Milestones 0 (foundation), 1 (scan engine), 2 (Ethereum connector), and 3
+(Discovery Engine) are complete.
 
 ## Commands
 
@@ -36,6 +37,13 @@ complete. Ethereum mainnet reads go through the Chain Access Layer.
   clients. Batch bounded read-sets into one multicall; never hit public RPCs in tests
   (mock at the transport level — tests/ethereum-rpc.ts). See docs/CHAIN-ACCESS.md.
 - MockConnector is tests-only; `createDefaultRegistry()` holds production connectors.
+- Discovery Engine (lib/discovery) sits ABOVE the Scan Engine and reuses its
+  `ConnectorRuntime.runIsolated()`. Layering is strict: chain access (lib/chain) →
+  discovery connectors (business logic, connectors/discovery/*) → DiscoveryEngine →
+  Ranking. Discovery connectors emit the canonical `Claim`; the engine treats them as
+  untrusted (validates, re-derives stable id, stamps provenance, enforces claim-URL
+  allow-list). Never repair invalid claims — drop them. See docs/DISCOVERY_ENGINE.md,
+  docs/CLAIM_MODEL.md, docs/CONNECTOR_SDK.md.
 
 ## Docs
 
