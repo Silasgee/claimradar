@@ -42,8 +42,18 @@ export abstract class AppError extends Error {
     Error.captureStackTrace?.(this, new.target);
   }
 
-  /** Serializable shape for API responses (RFC 9457-style, no internals). */
+  /**
+   * Serializable shape for API responses (RFC 9457-style, no internals).
+   *
+   * Non-operational errors are redacted: their `message` often originates
+   * from an unknown throwable (driver errors, file paths, connection
+   * strings) and must never reach a client. The full message still goes to
+   * the logs — see lib/api/handler.ts.
+   */
   toJSON(): Record<string, unknown> {
+    if (!this.isOperational) {
+      return { code: this.code, message: "Internal server error" };
+    }
     return {
       code: this.code,
       message: this.message,
