@@ -37,9 +37,25 @@ export class ConnectorRegistry {
     return [...this.connectors.values()];
   }
 
-  /** Connectors whose `supports()` passes for this request (the fan-out set). */
-  forRequest(request: ScanRequest): Connector[] {
-    return this.list().filter((connector) => connector.supports(request));
+  /**
+   * Connectors whose `supports()` passes for this request (the fan-out set).
+   *
+   * `supports()` is connector code, and a failing connector must never stop a
+   * scan — a connector whose `supports()` throws is excluded and reported via
+   * `onError` instead of propagating.
+   */
+  forRequest(
+    request: ScanRequest,
+    options?: { onError?: (connector: Connector, error: unknown) => void },
+  ): Connector[] {
+    return this.list().filter((connector) => {
+      try {
+        return connector.supports(request);
+      } catch (error) {
+        options?.onError?.(connector, error);
+        return false;
+      }
+    });
   }
 
   get size(): number {

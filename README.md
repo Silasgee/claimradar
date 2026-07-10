@@ -7,9 +7,12 @@ wallet address and the platform checks multiple chains and protocols for unclaim
 airdrops, claimable staking rewards, vesting schedules, presale allocations, governance
 rewards, NFT claims, refunds, and other forgotten on-chain assets.
 
-**Current state: Milestone 0 — foundation only.** The architecture, tooling, and the
-Connector SDK exist; no blockchain integrations do yet. See
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full technical blueprint.
+**Current state: Milestone 1 — scan engine.** The foundation (M0) plus the Claim Scan
+Engine: connector selection, isolated concurrent execution with timeout/retry/
+cancellation, normalization, merging, and internal metrics — proven with the
+deterministic MockConnector. No blockchain integrations yet. See
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the blueprint and
+[docs/SCAN-ENGINE.md](docs/SCAN-ENGINE.md) for the engine.
 
 ---
 
@@ -63,6 +66,7 @@ lib/                # shared infrastructure
   cache/            # CacheStore abstraction + Redis/in-memory implementations
   errors/           # typed AppError hierarchy
   logger.ts         # structured pino logging
+  scan/             # Claim Scan Engine: ScanService, ConnectorRuntime, metrics
 prisma/             # schema + migrations
 tests/              # unit tests (Vitest)
 types/              # core domain vocabulary (Chain, Claimable, ScanRequest, …)

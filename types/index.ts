@@ -80,6 +80,57 @@ export interface Claimable {
   rawPayload?: unknown;
 }
 
+/** Lifecycle states of a scan. Mirrors `ScanStatus` in prisma/schema.prisma. */
+export enum ScanStatus {
+  QUEUED = "QUEUED",
+  RUNNING = "RUNNING",
+  PARTIAL = "PARTIAL",
+  COMPLETE = "COMPLETE",
+  FAILED = "FAILED",
+}
+
+/** Terminal states of a single connector execution within a scan. */
+export enum ConnectorRunStatus {
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+  TIMEOUT = "TIMEOUT",
+  CANCELLED = "CANCELLED",
+}
+
+/**
+ * Per-connector execution summary attached to a scan report. Serializable and
+ * client-safe: errors are reduced to code + message (never stacks or causes).
+ */
+export interface ConnectorRunSummary {
+  connectorId: string;
+  status: ConnectorRunStatus;
+  /** Total attempts made (1 = no retries needed). */
+  attempts: number;
+  durationMs: number;
+  /** Claimables that survived normalization; 0 for non-success runs. */
+  itemsFound: number;
+  error?: { code: string; message: string };
+}
+
+/**
+ * The aggregate result of one scan: merged, deduplicated, deterministically
+ * sorted claimables plus per-connector provenance.
+ *
+ * - COMPLETE: every applicable connector succeeded (or none applied).
+ * - PARTIAL: some connectors failed but at least one succeeded.
+ * - FAILED: every applicable connector failed.
+ */
+export interface ScanReport {
+  scanId: string;
+  address: string;
+  status: ScanStatus;
+  startedAt: string;
+  completedAt: string;
+  durationMs: number;
+  claimables: Claimable[];
+  connectorRuns: ConnectorRunSummary[];
+}
+
 /** A request to scan one address, possibly restricted to specific chains. */
 export interface ScanRequest {
   /** Public wallet address (EVM 0x… or Solana base58). Validation is the caller's job. */

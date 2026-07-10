@@ -15,6 +15,15 @@ const envSchema = z.object({
   /** Redis connection string (consumed by the cache layer). */
   REDIS_URL: z.url({ message: "REDIS_URL must be a valid Redis URL" }),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
+  /**
+   * Serve /api/internal/metrics in production. Off by default — in deployed
+   * environments the internal API must additionally be network-restricted.
+   * Always served outside production.
+   */
+  INTERNAL_METRICS_ENABLED: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
 });
 
 export type Env = z.infer<typeof envSchema>;

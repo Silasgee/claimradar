@@ -1,7 +1,8 @@
 # ClaimRadar — agent notes
 
 Read-only Web3 platform for discovering claimable assets by wallet address.
-Milestone 0 (foundation) is complete; no blockchain integrations exist yet.
+Milestones 0 (foundation) and 1 (scan engine) are complete; no blockchain
+integrations exist yet.
 
 ## Commands
 
@@ -26,6 +27,13 @@ Milestone 0 (foundation) is complete; no blockchain integrations exist yet.
   `db/client.ts` (runtime), not in schema.prisma. Generated client output:
   `db/generated/` (gitignored).
 
+- Connectors are executed ONLY through `ConnectorRuntime` (lib/scan) — never call
+  `connector.scan()` directly outside tests. `ScanService` is the pipeline entrypoint;
+  its `execute → normalize → merge` order is a contract (see docs/SCAN-ENGINE.md).
+- `ConnectorRuntime.execute()` never throws; failures are `ConnectorRunResult` values.
+  Keep it that way — partial success is the product's core failure semantic.
+
 ## Docs
 
-Full blueprint: `docs/ARCHITECTURE.md`. Update it when architecture changes.
+Full blueprint: `docs/ARCHITECTURE.md`. Scan engine: `docs/SCAN-ENGINE.md`.
+Update them when architecture changes.
