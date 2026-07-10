@@ -7,12 +7,12 @@ wallet address and the platform checks multiple chains and protocols for unclaim
 airdrops, claimable staking rewards, vesting schedules, presale allocations, governance
 rewards, NFT claims, refunds, and other forgotten on-chain assets.
 
-**Current state: Milestone 1 — scan engine.** The foundation (M0) plus the Claim Scan
-Engine: connector selection, isolated concurrent execution with timeout/retry/
-cancellation, normalization, merging, and internal metrics — proven with the
-deterministic MockConnector. No blockchain integrations yet. See
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the blueprint and
-[docs/SCAN-ENGINE.md](docs/SCAN-ENGINE.md) for the engine.
+**Current state: Milestone 2 — first production connector.** Foundation (M0), the Claim
+Scan Engine (M1), and now the Ethereum connector: native ETH + curated ERC-20 balances
+read from mainnet via viem through the Chain Access Layer, fully covered by mocked-RPC
+integration tests. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the blueprint,
+[docs/SCAN-ENGINE.md](docs/SCAN-ENGINE.md) for the engine, and
+[docs/CHAIN-ACCESS.md](docs/CHAIN-ACCESS.md) for how connectors query chains.
 
 ---
 
@@ -57,13 +57,15 @@ app/                # Next.js App Router: pages + API routes
   api/health/       # liveness endpoint
 components/ui/      # shadcn/ui components
 config/             # environment validation (zod) — the only place process.env is read
-connectors/         # Connector SDK: interface, context, errors, registry, mock connector
-  mock/             # deterministic MockConnector (no blockchain access)
+connectors/         # Connector SDK: interface, context, errors, registry + connectors
+  ethereum/         # EthereumConnector: native ETH + curated ERC-20 balances (viem)
+  mock/             # deterministic MockConnector (tests only)
 db/                 # Prisma client singleton (+ generated client, gitignored)
 docs/               # architecture blueprint and technical docs
 lib/                # shared infrastructure
   api/              # route handler wrapper (request id, logging, error mapping)
   cache/            # CacheStore abstraction + Redis/in-memory implementations
+  chain/            # Chain Access Layer: provider-abstracted viem clients
   errors/           # typed AppError hierarchy
   logger.ts         # structured pino logging
   scan/             # Claim Scan Engine: ScanService, ConnectorRuntime, metrics
@@ -111,12 +113,13 @@ npm run dev
 All environment access goes through `config/env.ts`, which validates on server startup and
 fails fast with a precise message. See [.env.example](.env.example) for the template.
 
-| Variable       | Required | Description                                     |
-| -------------- | -------- | ----------------------------------------------- |
-| `NODE_ENV`     | no       | `development` (default) · `test` · `production` |
-| `DATABASE_URL` | yes      | PostgreSQL connection string                    |
-| `REDIS_URL`    | yes      | Redis connection string                         |
-| `LOG_LEVEL`    | no       | `fatal`…`trace`, default `info`                 |
+| Variable           | Required | Description                                     |
+| ------------------ | -------- | ----------------------------------------------- |
+| `NODE_ENV`         | no       | `development` (default) · `test` · `production` |
+| `DATABASE_URL`     | yes      | PostgreSQL connection string                    |
+| `REDIS_URL`        | yes      | Redis connection string                         |
+| `LOG_LEVEL`        | no       | `fatal`…`trace`, default `info`                 |
+| `ETHEREUM_RPC_URL` | no       | Mainnet RPC; public default for dev only        |
 
 Never commit `.env` — it is gitignored. Deployed environments use a secret manager.
 

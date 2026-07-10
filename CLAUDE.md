@@ -1,8 +1,8 @@
 # ClaimRadar — agent notes
 
 Read-only Web3 platform for discovering claimable assets by wallet address.
-Milestones 0 (foundation) and 1 (scan engine) are complete; no blockchain
-integrations exist yet.
+Milestones 0 (foundation), 1 (scan engine), and 2 (Ethereum connector) are
+complete. Ethereum mainnet reads go through the Chain Access Layer.
 
 ## Commands
 
@@ -32,6 +32,10 @@ integrations exist yet.
   its `execute → normalize → merge` order is a contract (see docs/SCAN-ENGINE.md).
 - `ConnectorRuntime.execute()` never throws; failures are `ConnectorRunResult` values.
   Keep it that way — partial success is the product's core failure semantic.
+- Chain access ONLY via `ctx.chain(chain)` (lib/chain) — connectors never build viem
+  clients. Batch bounded read-sets into one multicall; never hit public RPCs in tests
+  (mock at the transport level — tests/ethereum-rpc.ts). See docs/CHAIN-ACCESS.md.
+- MockConnector is tests-only; `createDefaultRegistry()` holds production connectors.
 
 ## Docs
 

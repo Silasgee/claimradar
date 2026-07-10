@@ -126,6 +126,14 @@ export class ConnectorRuntime {
         if (error instanceof RunCancelledError) {
           return done({ status: ConnectorRunStatus.CANCELLED, attempts });
         }
+        // A cooperative connector may surface ctx.signal aborts as
+        // AbortError before our race guard settles — classify by cause.
+        if (isAbortError(error)) {
+          if (signal?.aborted) {
+            return done({ status: ConnectorRunStatus.CANCELLED, attempts });
+          }
+          error = new ConnectorTimeoutError(connectorId, cfg.timeoutMs, { cause: error });
+        }
 
         const connectorError = toConnectorError(connectorId, error);
         const timedOut = connectorError instanceof ConnectorTimeoutError;
@@ -199,6 +207,10 @@ export class ConnectorRuntime {
 /** Configuration problems are permanent; everything else is assumed transient. */
 function isRetryable(error: ConnectorError): boolean {
   return !(error instanceof ConnectorConfigurationError);
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
 }
 
 function toConnectorError(connectorId: string, error: unknown): ConnectorError {

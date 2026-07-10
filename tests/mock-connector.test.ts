@@ -1,22 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { ConnectorRegistry, MockConnector, createDefaultRegistry } from "@/connectors";
-import type { ConnectorContext } from "@/connectors";
-import { InMemoryCacheStore } from "@/lib/cache";
-import { createLogger } from "@/lib/logger";
+import { ConnectorRegistry, MockConnector } from "@/connectors";
 import { Chain, ClaimableCategory } from "@/types";
 
-/** Fully deterministic context: fixed clock, in-memory cache, silent logger. */
-function createTestContext(): ConnectorContext {
-  const logger = createLogger({ test: true });
-  logger.level = "silent";
-  return {
-    logger,
-    cache: new InMemoryCacheStore(),
-    config: {},
-    now: () => new Date("2026-01-01T00:00:00.000Z"),
-  };
-}
+import { createTestContext } from "./helpers";
 
 const ADDRESS = "0x000000000000000000000000000000000000beef";
 
@@ -67,7 +54,10 @@ describe("MockConnector", () => {
   });
 
   it("is discoverable through the registry fan-out", () => {
-    const registry: ConnectorRegistry = createDefaultRegistry();
+    // The default registry holds production connectors only; tests register
+    // the mock explicitly.
+    const registry = new ConnectorRegistry();
+    registry.register(new MockConnector());
     const applicable = registry.forRequest({ address: ADDRESS });
     expect(applicable.map((c) => c.metadata.id)).toContain("mock");
   });

@@ -16,6 +16,12 @@ const envSchema = z.object({
   REDIS_URL: z.url({ message: "REDIS_URL must be a valid Redis URL" }),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   /**
+   * Ethereum mainnet RPC endpoint. The public default is fine for local
+   * development; production must use a dedicated provider (Alchemy/Infura)
+   * with its own key.
+   */
+  ETHEREUM_RPC_URL: z.url().default("https://cloudflare-eth.com"),
+  /**
    * Serve /api/internal/metrics in production. Off by default — in deployed
    * environments the internal API must additionally be network-restricted.
    * Always served outside production.

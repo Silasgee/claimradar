@@ -1,3 +1,5 @@
+import type { PublicClient } from "viem";
+
 import type { CacheStore } from "@/lib/cache";
 import type { Logger } from "@/lib/logger";
 import type { Chain, ClaimableCategory, ScanRequest, ScanResponse } from "@/types";
@@ -35,10 +37,9 @@ export interface ConnectorMetadata {
 /**
  * Capabilities injected into every connector call.
  *
- * Milestone 0 provides logging, caching, config, a clock, and cancellation.
- * Future milestones extend this with chain clients (RPC), indexer clients,
- * and price lookups — connectors will gain capabilities without changing
- * their own signatures.
+ * Logging, caching, config, a clock, cancellation, and read-only chain
+ * access. Future milestones extend this with indexer clients and price
+ * lookups — connectors gain capabilities without changing their signatures.
  */
 export interface ConnectorContext {
   /** Structured logger, pre-scoped to the connector id. */
@@ -52,6 +53,13 @@ export interface ConnectorContext {
    * deterministic under test and replay.
    */
   now: () => Date;
+  /**
+   * Read-only chain client from the Chain Access Layer (blueprint §9.2).
+   * Connectors must obtain ALL chain access here — never construct their own
+   * clients — so provider config, timeouts, and future failover/rate limiting
+   * stay centralized. Throws ChainNotConfiguredError for unsupported chains.
+   */
+  chain: (chain: Chain) => PublicClient;
   /** Cooperative cancellation — honored by the runtime's timeout handling. */
   signal?: AbortSignal;
 }

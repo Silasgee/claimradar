@@ -18,12 +18,20 @@ export function createTestLogger(): Logger {
 }
 
 /** Deterministic connector context: fixed clock, in-memory cache, silent logs. */
-export function createTestContext(): Omit<ConnectorContext, "signal"> {
+export function createTestContext(
+  overrides: Partial<Pick<ConnectorContext, "chain" | "config">> = {},
+): Omit<ConnectorContext, "signal"> {
   return {
     logger: createTestLogger(),
     cache: new InMemoryCacheStore(),
-    config: {},
+    config: overrides.config ?? {},
     now: () => new Date("2026-01-01T00:00:00.000Z"),
+    // Tests that exercise chain access must stub this explicitly.
+    chain:
+      overrides.chain ??
+      (() => {
+        throw new Error("ctx.chain is not stubbed in this test");
+      }),
   };
 }
 

@@ -14,16 +14,18 @@ export {
 } from "./errors";
 export { ConnectorRegistry } from "./registry";
 export { MockConnector } from "./mock/mock-connector";
+export { EthereumConnector } from "./ethereum/ethereum-connector";
 
 import { ConnectorRegistry } from "./registry";
-import { MockConnector } from "./mock/mock-connector";
+import { EthereumConnector } from "./ethereum/ethereum-connector";
 
 /**
- * Build the default registry with every production connector.
- * Real protocol connectors register here in future milestones.
+ * Build the default registry with every PRODUCTION connector. The
+ * MockConnector is intentionally not here — it emits fake data and belongs
+ * to tests, which register it explicitly.
  */
 export function createDefaultRegistry(): ConnectorRegistry {
   const registry = new ConnectorRegistry();
-  registry.register(new MockConnector());
+  registry.register(new EthereumConnector());
   return registry;
 }

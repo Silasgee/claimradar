@@ -1,5 +1,6 @@
 import type { Connector, ConnectorContext, ConnectorRegistry } from "@/connectors";
 import { createCache, type CacheStore } from "@/lib/cache";
+import { createDefaultChainAccess, type ChainAccess } from "@/lib/chain";
 import { ValidationError } from "@/lib/errors";
 import { createLogger, type Logger } from "@/lib/logger";
 import {
@@ -39,6 +40,8 @@ export interface ScanServiceDeps {
   logger?: Logger;
   /** Builds the namespaced cache handed to each connector. */
   cacheFactory?: (namespace: string) => CacheStore;
+  /** Chain Access Layer handed to connectors via ctx.chain. */
+  chainAccess?: ChainAccess;
   /** Injected clock, forwarded to connectors via ctx.now. */
   clock?: () => Date;
   /** Per-connector configuration, keyed by connector id. */
@@ -63,6 +66,9 @@ export class ScanService {
   private readonly metrics: ScanMetrics;
   private readonly logger: Logger;
   private readonly cacheFactory: (namespace: string) => CacheStore;
+  // Lazy: only resolved when a connector actually calls ctx.chain, so tests
+  // and chainless scans never touch env-driven client construction.
+  private chainAccess?: ChainAccess;
   private readonly clock: () => Date;
   private readonly connectorConfig: Record<string, Readonly<Record<string, string>>>;
   private readonly options: ScanServiceOptions;
@@ -73,6 +79,7 @@ export class ScanService {
     this.metrics = deps.metrics ?? scanMetrics;
     this.logger = deps.logger ?? createLogger({ module: "scan-service" });
     this.cacheFactory = deps.cacheFactory ?? createCache;
+    this.chainAccess = deps.chainAccess;
     this.clock = deps.clock ?? (() => new Date());
     this.connectorConfig = deps.connectorConfig ?? {};
     this.options = { ...DEFAULT_SCAN_OPTIONS, ...options };
@@ -182,6 +189,10 @@ export class ScanService {
       cache: this.cacheFactory(`connector:${id}:${version}`),
       config: this.connectorConfig[id] ?? {},
       now: this.clock,
+      chain: (chain) => {
+        this.chainAccess ??= createDefaultChainAccess();
+        return this.chainAccess.getClient(chain);
+      },
     };
   }
 }
