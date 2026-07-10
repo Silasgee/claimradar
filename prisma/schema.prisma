@@ -1,0 +1,121 @@
+// ClaimRadar database schema — Milestone 0.
+//
+// Only the models the core architecture needs: scans, the claimables they
+// discover, and a registry mirror of connectors. Users, watchlists, and
+// notifications arrive in later milestones.
+//
+// Enum values mirror the TypeScript enums in types/index.ts — keep them in sync.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../db/generated/prisma"
+}
+
+// Prisma 7: the connection URL lives in prisma.config.ts (CLI) and in the
+// driver adapter passed to PrismaClient (runtime) — not in the schema.
+datasource db {
+  provider = "postgresql"
+}
+
+enum Chain {
+  ETHEREUM
+  BASE
+  ARBITRUM
+  OPTIMISM
+  POLYGON
+  BNB
+  SOLANA
+}
+
+enum ClaimableCategory {
+  AIRDROP
+  STAKING_REWARD
+  VESTING
+  PRESALE_ALLOCATION
+  GOVERNANCE_REWARD
+  NFT_CLAIM
+  REFUND
+  OTHER
+}
+
+enum ScanStatus {
+  QUEUED
+  RUNNING
+  PARTIAL
+  COMPLETE
+  FAILED
+}
+
+enum Confidence {
+  CONFIRMED
+  LIKELY
+  ESTIMATED
+}
+
+/// Registry mirror of code-defined connectors: enables per-environment
+/// enable/disable and health tracking without a deploy.
+model Connector {
+  id          String            @id // slug, e.g. "arbitrum-airdrop-merkle"
+  displayName String
+  version     String
+  category    ClaimableCategory
+  isEnabled   Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  claimables Claimable[]
+
+  @@map("connectors")
+}
+
+/// One scan of one address. The async unit of work.
+model Scan {
+  id          String     @id @default(uuid())
+  address     String
+  status      ScanStatus @default(QUEUED)
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+
+  claimables Claimable[]
+
+  @@index([address, createdAt(sort: Desc)])
+  @@map("scans")
+}
+
+/// A claimable asset discovered by a connector during a scan.
+model Claimable {
+  id          String            @id @default(uuid())
+  scanId      String
+  connectorId String
+  address     String
+  chain       Chain
+  category    ClaimableCategory
+
+  // Token metadata (denormalized for M0; a tokens table arrives with pricing).
+  tokenSymbol          String
+  tokenName            String
+  tokenDecimals        Int
+  tokenContractAddress String? // null = native asset
+
+  /// Integer base-unit amount; numeric(78,0) holds a full uint256.
+  amountRaw     Decimal  @db.Decimal(78, 0)
+  amountDecimal Decimal  @db.Decimal(38, 18)
+  usdValue      Decimal? @db.Decimal(38, 2)
+
+  claimUrl        String
+  contractAddress String
+  expiresAt       DateTime?
+  confidence      Confidence
+  riskFlags       String[]   @default([])
+  /// Connector-specific payload, preserved for explainability and replay.
+  rawPayload      Json?
+  discoveredAt    DateTime   @default(now())
+
+  scan      Scan      @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  connector Connector @relation(fields: [connectorId], references: [id])
+
+  @@index([scanId])
+  @@index([address, chain])
+  @@map("claimables")
+}
