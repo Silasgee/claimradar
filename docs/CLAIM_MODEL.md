@@ -197,7 +197,7 @@ fails this policy.
 `gasEstimate` is `{ gasLimit }` (uint256-safe string) or `null`. It is **best-effort**: a
 connector attempts it (e.g. `estimateContractGas` for the claim call) only when it makes
 sense (status `CLAIMABLE`) and returns `null` on any failure. Gas estimation must **never**
-fail discovery. ClaimRadar is read-only — it estimates but never executes the claim.
+fail discovery. AssetRadar is read-only — it estimates but never executes the claim.
 
 ---
 

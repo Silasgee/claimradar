@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
+import { BestOpportunity } from "@/components/results/best-opportunity";
 import { EmptyState } from "@/components/results/empty-state";
 import { SummaryCards } from "@/components/results/summary-cards";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatRelativeTime, shortenAddress } from "@/lib/format";
 import { lastScanId, loadReport } from "@/lib/history";
 import { summarize } from "@/lib/results";
-import { ConnectorRunStatus, ScanStatus } from "@/types";
+import { ClaimStatus, ConnectorRunStatus, ScanStatus } from "@/types";
 
 // Code-split the heavier result sections.
 const Breakdowns = dynamic(() => import("./breakdowns").then((m) => m.Breakdowns), {
@@ -47,13 +48,15 @@ export function ResultsView() {
   }
 
   const failed = report.connectorRuns.filter((r) => r.status !== ConnectorRunStatus.SUCCESS);
+  // Claims are rank-sorted, so the first claimable one is the best thing to act on.
+  const topOpportunity = report.claims.find((c) => c.status === ClaimStatus.CLAIMABLE) ?? null;
 
   function exportJson() {
     const blob = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `claimradar-${report!.wallet.slice(0, 10)}-${report!.discoveryId.slice(0, 8)}.json`;
+    a.download = `assetradar-${report!.wallet.slice(0, 10)}-${report!.discoveryId.slice(0, 8)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -114,6 +117,13 @@ export function ResultsView() {
             {report.stats.dropped} item{report.stats.dropped > 1 ? "s were" : " was"} excluded
             because they couldn&apos;t be safely verified.
           </p>
+        </div>
+      )}
+
+      {/* Top opportunity spotlight — the single best thing to act on. */}
+      {topOpportunity && (
+        <div className="mt-6">
+          <BestOpportunity claim={topOpportunity} />
         </div>
       )}
 

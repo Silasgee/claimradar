@@ -1,4 +1,4 @@
-# Frontend / MVP UI
+# AssetRadar — Frontend / MVP UI
 
 The web app turns the Discovery Engine into a product: paste a wallet, watch a live scan,
 get a ranked, explainable list of claim opportunities. Built with the Next.js App Router,
@@ -6,6 +6,37 @@ Tailwind CSS, and hand-authored shadcn/ui primitives. Dark-first, responsive, ac
 
 **Lighthouse (desktop, production build):** Performance 100 · Accessibility 100 · Best
 Practices 100 · SEO 100.
+
+---
+
+## Product positioning
+
+AssetRadar (by **AssetRadar Labs**) is a **Web3 asset-recovery tool**, not a portfolio
+tracker or a wallet dashboard. One job: given any public address, answer _"what can this
+wallet still claim or has forgotten about?"_ — unclaimed airdrops, staking and governance
+rewards, vesting, presales, NFT claims, refunds, and forgotten token balances.
+
+Positioning pillars (these shape every screen and every sentence of copy):
+
+1. **Trust over hype.** Read-only, non-custodial, no wallet connection, no signatures.
+   The visual language is restrained (Stripe/Linear/Vercel-adjacent), never
+   crypto-casino.
+2. **Answers, not data.** Results lead with the single best action (Top opportunity),
+   then totals, then detail. Everything is ranked and explainable ("why it was found").
+3. **Verified paths only.** Every claim links to an allow-listed official page; anything
+   that can't be safely verified is excluded and said so.
+
+## MVP capabilities (honest scope)
+
+- Scan any EVM address; discovery currently runs on **Ethereum mainnet** with the
+  Merkle-distributor connector (the architecture supports many protocols/chains — see
+  [DISCOVERY_ENGINE.md](./DISCOVERY_ENGINE.md)).
+- Live scan progress with honest status phases, cancel, and typed failure states.
+- Ranked results: top-opportunity spotlight, summary stats, protocol/chain breakdowns,
+  per-claim detail (status, confidence, expiration, gas estimate, on-chain check,
+  official link), JSON export, rescan.
+- Local-only history (no accounts). USD pricing appears where available; unpriced claims
+  are labeled, never guessed.
 
 ---
 

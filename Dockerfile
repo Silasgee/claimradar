@@ -1,4 +1,4 @@
-# ClaimRadar — multi-stage Dockerfile.
+# AssetRadar — multi-stage Dockerfile.
 #
 #   dev    — hot-reloading dev server (used by docker-compose.yml)
 #   runner — minimal production image from Next.js standalone output

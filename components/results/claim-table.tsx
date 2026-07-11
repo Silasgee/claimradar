@@ -10,7 +10,7 @@ export function ClaimTable({ claims }: { claims: RankedClaim[] }) {
           Claims <span className="text-muted-foreground">({claims.length})</span>
         </h2>
         <span className="text-muted-foreground hidden text-xs sm:inline">
-          Ranked by opportunity · tap a row for provenance
+          Ranked by value · tap a row for details
         </span>
       </div>
       <ul>

@@ -172,7 +172,7 @@ await page.waitForTimeout(900);
 await shot(page, "02-scan-progress");
 
 // Results (let it resolve + navigate)
-await page.waitForURL("**/results**", { timeout: 8000 });
+await page.waitForURL("**/results**", { timeout: 20000 });
 await page.waitForTimeout(600);
 await shot(page, "03-results");
 
@@ -185,7 +185,7 @@ await shot(page, "04-results-expanded");
 await page.unroute("**/api/scan");
 await mockScan(page, report([]), 300);
 await page.goto(`${BASE}/scan?address=0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b`);
-await page.waitForURL("**/results**", { timeout: 8000 });
+await page.waitForURL("**/results**", { timeout: 20000 });
 await page.waitForTimeout(400);
 await shot(page, "05-empty");
 
@@ -212,7 +212,7 @@ await shot(mpage, "07-home-mobile");
 
 await mockScan(mpage, report(DEMO_CLAIMS), 300);
 await mpage.goto(`${BASE}/scan?address=0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b`);
-await mpage.waitForURL("**/results**", { timeout: 8000 });
+await mpage.waitForURL("**/results**", { timeout: 20000 });
 await mpage.waitForTimeout(600);
 await shot(mpage, "08-results-mobile");
 

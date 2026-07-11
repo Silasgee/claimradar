@@ -19,8 +19,8 @@ export function SiteFooter() {
             Non-custodial · No signing · No keys
           </span>
           <p className="text-xs">
-            © {new Date().getFullYear()} ClaimRadar. Information only — always verify claim links
-            against official sources.
+            © {new Date().getFullYear()} AssetRadar Labs. Information only — always verify claim
+            links against official sources.
           </p>
         </div>
       </div>

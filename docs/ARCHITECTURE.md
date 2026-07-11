@@ -1,4 +1,4 @@
-# ClaimRadar — Technical Blueprint & Architecture Document
+# AssetRadar — Technical Blueprint & Architecture Document
 
 > **Status:** Draft v1.0 — Architecture baseline for the next 6 months
 > **Audience:** Engineering, Product, Security, DevOps
@@ -47,10 +47,10 @@ question: **"What can this address claim right now?"**
 
 ### 1.2 Product Vision
 
-ClaimRadar is a read-only discovery platform. A user pastes **any public wallet address**
+AssetRadar is a read-only discovery platform. A user pastes **any public wallet address**
 and receives a consolidated, ranked list of claimable assets across every supported chain
 and protocol, with enough context (amount, USD value, expiry, claim link, risk flags) to
-act — but ClaimRadar **never** holds keys, signs transactions, or executes claims in the
+act — but AssetRadar **never** holds keys, signs transactions, or executes claims in the
 MVP. Trust is the product; being non-custodial and read-only is a feature, not a limitation.
 
 ### 1.3 Goals
@@ -90,7 +90,7 @@ MVP. Trust is the product; being non-custodial and read-only is a feature, not a
 
 1. **Read-only by default.** No wallet connection required to scan.
 2. **Never fabricate value.** Every item carries a `confidence` and a `source`. Estimated values are labeled as estimates.
-3. **Anti-phishing is core UX.** We only ever link to allow-listed official claim URLs, and we warn users that ClaimRadar will never ask them to connect a wallet to "verify" or "unlock" a claim.
+3. **Anti-phishing is core UX.** We only ever link to allow-listed official claim URLs, and we warn users that AssetRadar will never ask them to connect a wallet to "verify" or "unlock" a claim.
 4. **Explainability.** Every claimable shows the connector, contract, and method that produced it.
 
 ---
@@ -150,7 +150,7 @@ MVP. Trust is the product; being non-custodial and read-only is a feature, not a
 
 **Modular monolith backend + isolated connector plugins + async worker tier.**
 
-We deliberately **do not** start with microservices. The decisive complexity in ClaimRadar
+We deliberately **do not** start with microservices. The decisive complexity in AssetRadar
 is not service decomposition — it's the **connector fan-out** and **data aggregation**. A
 modular monolith (clear module boundaries, one deployable) gives us:
 
@@ -564,7 +564,7 @@ number as `confirmed` if it could be stale — mark it `likely`.
 Monorepo (Turborepo + pnpm workspaces). Connectors are first-class packages.
 
 ```
-claimradar/
+assetradar/
 ├── apps/
 │   ├── web/                      # Next.js frontend + BFF routes
 │   │   ├── app/                  # App Router pages (scan, results, watchlist)
@@ -605,7 +605,7 @@ claimradar/
 │   ├── k8s/ (or fly/, ecs/)      # deployment manifests
 │   └── docker/                   # Dockerfiles, compose for local
 ├── docs/
-│   ├── claimradar/ARCHITECTURE.md
+│   ├── assetradar/ARCHITECTURE.md
 │   └── adr/                      # architecture decision records
 ├── .github/workflows/           # CI/CD
 ├── turbo.json
@@ -792,8 +792,8 @@ coverage) without alarming users.
 
 ### 17.2 Anti-phishing (product-critical)
 
-- **Claim-URL allow-list.** Every `claimUrl` surfaced must be in `allowlisted_claim_urls`; CI fails a connector that emits a non-allow-listed URL. Prevents ClaimRadar from becoming a phishing vector.
-- **Explicit user warnings:** "ClaimRadar never asks you to connect a wallet to unlock a claim." Educate against the exact scam pattern our product could be impersonated by.
+- **Claim-URL allow-list.** Every `claimUrl` surfaced must be in `allowlisted_claim_urls`; CI fails a connector that emits a non-allow-listed URL. Prevents AssetRadar from becoming a phishing vector.
+- **Explicit user warnings:** "AssetRadar never asks you to connect a wallet to unlock a claim." Educate against the exact scam pattern our product could be impersonated by.
 - **Risk flags** on unverified contracts / lookalike tokens.
 
 ### 17.3 Application security
@@ -935,7 +935,7 @@ eroding trust — the core product risk.
 | **Provider outages / rate-limit hits**                            | High     | High       | Multi-provider failover in Chain Access Layer, circuit breakers, partial results, backpressure                                            |
 | **Connector drift** (protocols upgrade contracts/subgraphs)       | High     | High       | Golden benchmark set + synthetic canary + shadow mode + version-keyed cache invalidation; connectors owned/monitored per-health           |
 | **False positives/negatives erode trust**                         | Critical | Medium     | `confidence` bands, on-chain confirmation for final numbers (`hybrid`), explainability, never fabricate value                             |
-| **ClaimRadar abused as phishing lure / impersonated**             | Critical | Medium     | Claim-URL allow-list enforced in CI, user education, risk flags, no wallet-connect-to-verify pattern                                      |
+| **AssetRadar abused as phishing lure / impersonated**             | Critical | Medium     | Claim-URL allow-list enforced in CI, user education, risk flags, no wallet-connect-to-verify pattern                                      |
 | **Malicious/buggy connector** (supply chain)                      | High     | Low        | Mandatory review, sandboxed I/O via `ctx`, SSRF guard, conformance suite, SBOM/SCA                                                        |
 | **Fan-out latency > user patience**                               | Medium   | Medium     | Streamed partial results, per-connector timeouts, cache-first, prioritize high-value connectors                                           |
 | **Regulatory reclassification** (are we giving financial advice?) | Medium   | Low        | Read-only, non-custodial, "informational only" disclaimers, legal review before claim-execution feature                                   |

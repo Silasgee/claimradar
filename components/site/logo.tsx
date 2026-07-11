@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** ClaimRadar wordmark + radar mark. Pure SVG, no external assets. */
+/** AssetRadar wordmark + radar mark. Pure SVG, no external assets. */
 export function Logo({ className, withText = true }: { className?: string; withText?: boolean }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
@@ -24,7 +24,7 @@ export function Logo({ className, withText = true }: { className?: string; withT
         />
         <circle cx="16.5" cy="7.5" r="1.6" fill="var(--brand)" />
       </svg>
-      {withText && <span className="text-[15px] font-semibold tracking-tight">ClaimRadar</span>}
+      {withText && <span className="text-[15px] font-semibold tracking-tight">AssetRadar</span>}
     </span>
   );
 }

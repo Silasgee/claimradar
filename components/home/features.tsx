@@ -27,7 +27,7 @@ export function Features() {
   return (
     <section id="features" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="mb-12 max-w-2xl">
-        <p className="text-brand text-sm font-medium">Why ClaimRadar</p>
+        <p className="text-brand text-sm font-medium">Why AssetRadar</p>
         <h2 className="mt-2 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           Trustworthy by default
         </h2>

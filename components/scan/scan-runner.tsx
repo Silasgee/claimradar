@@ -17,8 +17,36 @@ const FALLBACK_CONNECTORS: ProgressConnector[] = [
     id: "merkle-distributor",
     displayName: "Merkle Distributor",
     protocol: { name: "Merkle Distributor Airdrop" },
+    categories: ["AIRDROP"],
   },
 ];
+
+// Honest phrasing for what each category check actually does. Only categories
+// present in the loaded connectors are shown — we never claim to check for
+// something the engine isn't looking for.
+const CATEGORY_PHRASE: Record<string, string> = {
+  AIRDROP: "Checking unclaimed airdrops",
+  STAKING_REWARD: "Searching staking rewards",
+  VESTING: "Looking for vesting contracts",
+  GOVERNANCE_REWARD: "Checking governance rewards",
+  PRESALE_ALLOCATION: "Checking presale allocations",
+  NFT_CLAIM: "Looking for NFT claims",
+  REFUND: "Searching for refunds",
+  OTHER: "Reading token balances",
+};
+
+/** Build the real scan phases from the connectors that will actually run. */
+function buildPhases(connectors: ProgressConnector[]): string[] {
+  const categories = new Set<string>();
+  for (const c of connectors) for (const cat of c.categories ?? []) categories.add(cat);
+  const categoryPhases = [...categories].map((cat) => CATEGORY_PHRASE[cat] ?? "Scanning protocols");
+  return [
+    "Reading on-chain wallet state",
+    ...categoryPhases,
+    "Verifying eligibility on-chain",
+    "Ranking opportunities by value",
+  ];
+}
 
 export function ScanRunner() {
   const router = useRouter();
@@ -117,6 +145,10 @@ export function ScanRunner() {
     Math.floor((progress / 100) * (shown.length || 1)),
   );
 
+  const phases = buildPhases(shown.length ? shown : FALLBACK_CONNECTORS);
+  const phaseIndex = Math.min(phases.length - 1, Math.floor((progress / 100) * phases.length));
+  const statusText = progress >= 100 ? "Done" : phases[phaseIndex]!;
+
   return (
     <ScanProgress
       address={address}
@@ -124,6 +156,7 @@ export function ScanRunner() {
       progress={progress}
       activeIndex={progress >= 100 ? shown.length : activeIndex}
       etaSeconds={etaSeconds}
+      statusText={statusText}
       onCancel={() => controllerRef.current?.abort()}
     />
   );

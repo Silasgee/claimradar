@@ -1,6 +1,6 @@
 # Discovery Engine — Milestone 3
 
-The Discovery Engine is the heart of ClaimRadar: it turns a wallet address into a ranked
+The Discovery Engine is the heart of AssetRadar: it turns a wallet address into a ranked
 list of **claim opportunities**. It lives in [`lib/discovery/`](../lib/discovery) and sits
 **above** the Scan Engine (M1) and the Chain Access Layer (M2).
 

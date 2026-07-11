@@ -6,7 +6,7 @@
  * deliberate — every connector depends on this file.
  */
 
-/** Chains ClaimRadar knows about. Mirrors the `Chain` enum in prisma/schema.prisma. */
+/** Chains AssetRadar knows about. Mirrors the `Chain` enum in prisma/schema.prisma. */
 export enum Chain {
   ETHEREUM = "ETHEREUM",
   BASE = "BASE",

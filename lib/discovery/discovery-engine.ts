@@ -26,7 +26,7 @@ import type { DiscoveryConnectorRegistry } from "./registry";
 import { rankClaims } from "./ranking";
 
 /**
- * Discovery Engine (Milestone 3, Phase 3) — the heart of ClaimRadar.
+ * Discovery Engine (Milestone 3, Phase 3) — the heart of AssetRadar.
  *
  * Sits ABOVE the Scan Engine. It accepts a wallet, executes discovery
  * connectors in isolation (reusing the Scan Engine's ConnectorRuntime),

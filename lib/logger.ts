@@ -17,7 +17,7 @@ const isDev = process.env.NODE_ENV !== "production";
 
 export const logger = pino({
   level,
-  base: { service: "claimradar" },
+  base: { service: "assetradar" },
   timestamp: pino.stdTimeFunctions.isoTime,
   formatters: {
     level(label) {

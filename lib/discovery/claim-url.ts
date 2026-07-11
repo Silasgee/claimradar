@@ -1,7 +1,7 @@
 /**
  * Claim-URL security (Milestone 3, Phase 8; blueprint §17.2).
  *
- * ClaimRadar's biggest product risk is becoming a phishing vector: a malicious
+ * AssetRadar's biggest product risk is becoming a phishing vector: a malicious
  * or buggy connector emitting an attacker's "claim" link. Every claim URL is
  * therefore validated against a two-part allow-list before it can reach a user:
  *

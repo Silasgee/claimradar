@@ -8,7 +8,7 @@ export function SiteHeader() {
   return (
     <header className="border-border/80 bg-background/70 sticky top-0 z-40 border-b backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="rounded-md" aria-label="ClaimRadar home">
+        <Link href="/" className="rounded-md" aria-label="AssetRadar home">
           <Logo />
         </Link>
         <nav className="flex items-center gap-1 text-sm">

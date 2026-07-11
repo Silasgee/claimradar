@@ -33,23 +33,24 @@ export default function HomePage() {
               <span className="bg-success absolute inline-flex size-full animate-ping rounded-full opacity-60" />
               <span className="bg-success relative inline-flex size-1.5 rounded-full" />
             </span>
-            Read-only Web3 asset recovery
+            Read-only · non-custodial
           </div>
 
           <h1
             className="animate-fade-up mt-6 text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-6xl"
             style={{ animationDelay: "60ms" }}
           >
-            Find the crypto your
-            <br className="hidden sm:block" /> wallet forgot about
+            Uncover the assets
+            <br className="hidden sm:block" /> your wallet forgot
           </h1>
 
           <p
             className="animate-fade-up text-muted-foreground mt-5 max-w-xl text-lg leading-relaxed text-balance"
             style={{ animationDelay: "120ms" }}
           >
-            Paste any wallet address to uncover unclaimed airdrops, staking rewards, vesting, and
-            refunds — ranked by value, with a verified link to every official claim.
+            Paste any public address. AssetRadar surfaces unclaimed airdrops, staking and governance
+            rewards, vesting, refunds, and forgotten token balances — ranked by value, each with a
+            verified link to its official claim.
           </p>
 
           <div className="animate-fade-up mt-9 w-full max-w-xl" style={{ animationDelay: "180ms" }}>
@@ -70,10 +71,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="py-14">
-        <RecentScans />
-      </div>
-
+      <RecentScans />
       <HowItWorks />
       <WhatWeFind />
       <Features />

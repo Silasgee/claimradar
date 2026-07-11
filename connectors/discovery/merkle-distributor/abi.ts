@@ -3,7 +3,7 @@
  *
  * Only the read + claim members the connector needs. `isClaimed` and
  * `merkleRoot` are `view` reads (on-chain verification); `claim` is used only
- * for gas estimation — ClaimRadar never executes it (read-only, blueprint §17.1).
+ * for gas estimation — AssetRadar never executes it (read-only, blueprint §17.1).
  */
 export const MERKLE_DISTRIBUTOR_ABI = [
   {

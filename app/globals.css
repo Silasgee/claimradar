@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * ClaimRadar design system — dark-first, restrained, Linear/Vercel-adjacent.
+ * AssetRadar design system — dark-first, restrained, Linear/Vercel-adjacent.
  * Mostly monochrome (white primary on near-black), with semantic status colors
  * reserved for meaning (claimable / expiring / claimed / expired). No flashy
  * gradients; a single faint brand hue is used only for focus + accents.

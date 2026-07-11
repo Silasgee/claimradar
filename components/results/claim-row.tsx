@@ -126,10 +126,10 @@ export function ClaimRow({ claim }: { claim: RankedClaim }) {
                 />
               </span>
             </DetailItem>
-            <DetailItem label="Method">
+            <DetailItem label="On-chain check">
               <span className="font-mono text-xs">{claim.provenance.method ?? "—"}</span>
             </DetailItem>
-            <DetailItem label="Discovered by">
+            <DetailItem label="Checked by">
               <span className="font-mono text-xs">
                 {claim.provenance.connectorId} v{claim.provenance.connectorVersion}
               </span>

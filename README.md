@@ -1,8 +1,8 @@
-# ClaimRadar
+# AssetRadar
 
 > Discover forgotten Web3 assets by scanning any public wallet address.
 
-ClaimRadar is a production-grade, **read-only** Web3 platform. A user enters a public
+AssetRadar is a production-grade, **read-only** Web3 platform. A user enters a public
 wallet address and the platform checks multiple chains and protocols for unclaimed
 airdrops, claimable staking rewards, vesting schedules, presale allocations, governance
 rewards, NFT claims, refunds, and other forgotten on-chain assets.
@@ -27,7 +27,7 @@ explainable list of claim opportunities. Dark-first, responsive, accessible; Lig
 
 Billions of dollars in Web3 assets go unclaimed: airdrops expire, rewards accrue silently,
 vesting cliffs pass unnoticed. The information is public but fragmented across dozens of
-chains and hundreds of protocols. ClaimRadar answers one question in one place: **"What can
+chains and hundreds of protocols. AssetRadar answers one question in one place: **"What can
 this address claim right now?"** — without ever holding keys, signing transactions, or
 executing claims. Trust is the product.
 
@@ -98,8 +98,8 @@ Planned-but-not-yet-present folders from the blueprint: `workers/` (background j
 ## Installation
 
 ```bash
-git clone https://github.com/Silasgee/claimradar.git
-cd claimradar
+git clone https://github.com/Silasgee/assetradar.git
+cd assetradar
 npm install
 cp .env.example .env
 ```

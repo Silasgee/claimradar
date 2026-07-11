@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "ClaimRadar — Find forgotten Web3 assets";
+export const alt = "AssetRadar — Find forgotten Web3 assets";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -29,7 +29,7 @@ export default function OgImage() {
             display: "flex",
           }}
         />
-        <div style={{ color: "white", fontSize: 34, fontWeight: 600 }}>ClaimRadar</div>
+        <div style={{ color: "white", fontSize: 34, fontWeight: 600 }}>AssetRadar</div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div

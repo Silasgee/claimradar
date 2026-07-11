@@ -33,7 +33,7 @@ describe("error serialization", () => {
 describe("createApiHandler error mapping", () => {
   it("maps unknown throwables to an opaque 500 without leaking internals", async () => {
     const handler = createApiHandler("boom", async () => {
-      throw new Error("secret internal detail: /etc/claimradar/creds.json");
+      throw new Error("secret internal detail: /etc/assetradar/creds.json");
     });
 
     const response = await handler(new NextRequest("http://localhost/api/boom"));

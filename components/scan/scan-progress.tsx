@@ -12,6 +12,7 @@ export interface ProgressConnector {
   id: string;
   displayName: string;
   protocol: { name: string };
+  categories?: string[];
 }
 
 export function ScanProgress({
@@ -20,6 +21,7 @@ export function ScanProgress({
   progress,
   activeIndex,
   etaSeconds,
+  statusText,
   onCancel,
 }: {
   address: string;
@@ -27,6 +29,7 @@ export function ScanProgress({
   progress: number;
   activeIndex: number;
   etaSeconds: number | null;
+  statusText: string;
   onCancel: () => void;
 }) {
   return (
@@ -46,9 +49,12 @@ export function ScanProgress({
 
       <div className="mt-8">
         <Progress value={progress} />
-        <div className="text-muted-foreground mt-2 flex items-center justify-between text-xs">
-          <span>Checking {connectors.length || "…"} sources</span>
-          <span>
+        <div className="mt-2.5 flex items-center justify-between gap-3 text-xs">
+          {/* Rotating status reflects the real work: read → check → verify → rank. */}
+          <span aria-live="polite" className="text-foreground font-medium">
+            {statusText}
+          </span>
+          <span className="text-muted-foreground shrink-0">
             {etaSeconds !== null && etaSeconds > 0 ? `~${etaSeconds}s remaining` : "Finishing up…"}
           </span>
         </div>

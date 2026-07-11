@@ -37,7 +37,7 @@ describe("ClaimRow", () => {
     const toggle = screen.getByRole("button", { expanded: false });
     await user.click(toggle);
     // Async find retries until the disclosure panel has rendered.
-    expect(await screen.findByText(/discovered by/i)).toBeInTheDocument();
+    expect(await screen.findByText(/checked by/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { expanded: true })).toBeInTheDocument();
     expect(screen.getByText(/merkle-distributor v1\.0\.0/)).toBeInTheDocument();
     expect(screen.getByText(/120,000 gas/)).toBeInTheDocument();

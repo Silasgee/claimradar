@@ -1,4 +1,4 @@
-# ClaimRadar — agent notes
+# AssetRadar — agent notes
 
 Read-only Web3 platform for discovering forgotten/unclaimed on-chain assets by
 wallet address. It is NOT a portfolio tracker — optimize for claim discovery.

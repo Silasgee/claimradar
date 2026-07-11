@@ -12,8 +12,8 @@ import type { DiscoveryReport } from "@/types";
  *   render without a refetch, while staying out of long-term storage.
  */
 
-const HISTORY_KEY = "claimradar:history:v1";
-const REPORT_PREFIX = "claimradar:report:";
+const HISTORY_KEY = "assetradar:history:v1";
+const REPORT_PREFIX = "assetradar:report:";
 const MAX_HISTORY = 8;
 
 export interface ScanHistoryEntry {
@@ -38,7 +38,7 @@ function readHistory(): ScanHistoryEntry[] {
 function writeHistory(entries: ScanHistoryEntry[]): void {
   try {
     window.localStorage.setItem(HISTORY_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)));
-    window.dispatchEvent(new Event("claimradar:history"));
+    window.dispatchEvent(new Event("assetradar:history"));
   } catch {
     /* storage full or unavailable — history is best-effort */
   }
@@ -48,7 +48,7 @@ function writeHistory(entries: ScanHistoryEntry[]): void {
 export function saveScan(report: DiscoveryReport): string {
   try {
     window.sessionStorage.setItem(REPORT_PREFIX + report.discoveryId, JSON.stringify(report));
-    window.sessionStorage.setItem("claimradar:lastScanId", report.discoveryId);
+    window.sessionStorage.setItem("assetradar:lastScanId", report.discoveryId);
   } catch {
     /* ignore */
   }
@@ -78,7 +78,7 @@ export function loadReport(scanId: string): DiscoveryReport | null {
 export function lastScanId(): string | null {
   if (typeof window === "undefined") return null;
   try {
-    return window.sessionStorage.getItem("claimradar:lastScanId");
+    return window.sessionStorage.getItem("assetradar:lastScanId");
   } catch {
     return null;
   }
@@ -96,10 +96,10 @@ export function useScanHistory(): {
     const sync = () => setHistory(readHistory());
     sync();
     window.addEventListener("storage", sync);
-    window.addEventListener("claimradar:history", sync);
+    window.addEventListener("assetradar:history", sync);
     return () => {
       window.removeEventListener("storage", sync);
-      window.removeEventListener("claimradar:history", sync);
+      window.removeEventListener("assetradar:history", sync);
     };
   }, []);
 

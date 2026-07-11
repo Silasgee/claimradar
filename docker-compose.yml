@@ -12,7 +12,7 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://claimradar:claimradar@db:5432/claimradar
+      DATABASE_URL: postgresql://assetradar:assetradar@db:5432/assetradar
       REDIS_URL: redis://redis:6379
       LOG_LEVEL: debug
     volumes:
@@ -28,15 +28,15 @@ services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: claimradar
-      POSTGRES_PASSWORD: claimradar
-      POSTGRES_DB: claimradar
+      POSTGRES_USER: assetradar
+      POSTGRES_PASSWORD: assetradar
+      POSTGRES_DB: assetradar
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U claimradar -d claimradar"]
+      test: ["CMD-SHELL", "pg_isready -U assetradar -d assetradar"]
       interval: 5s
       timeout: 3s
       retries: 10

@@ -8,10 +8,10 @@ import { SiteHeader } from "@/components/site/site-header";
 import "./globals.css";
 
 const SITE = {
-  name: "ClaimRadar",
+  name: "AssetRadar",
   description:
     "Discover forgotten Web3 assets. Paste any wallet address to surface unclaimed airdrops, staking rewards, vesting, and refunds across chains — read-only, non-custodial.",
-  url: "https://claimradar.xyz",
+  url: "https://assetradar.xyz",
 };
 
 export const metadata: Metadata = {
@@ -29,7 +29,9 @@ export const metadata: Metadata = {
     "crypto airdrop finder",
   ],
   applicationName: SITE.name,
-  authors: [{ name: SITE.name }],
+  authors: [{ name: "AssetRadar Labs" }],
+  creator: "AssetRadar Labs",
+  publisher: "AssetRadar Labs",
   openGraph: {
     type: "website",
     url: SITE.url,

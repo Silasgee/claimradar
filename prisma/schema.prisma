@@ -1,4 +1,4 @@
-// ClaimRadar database schema — Milestone 0.
+// AssetRadar database schema — Milestone 0.
 //
 // Only the models the core architecture needs: scans, the claimables they
 // discover, and a registry mirror of connectors. Users, watchlists, and
