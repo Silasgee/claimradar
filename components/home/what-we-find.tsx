@@ -1,23 +1,18 @@
-import {
-  Coins,
-  Gift,
-  Landmark,
-  PiggyBank,
-  ReceiptText,
-  Sprout,
-  Ticket,
-  Wallet,
-} from "lucide-react";
-
+// Icons deliberately absent: the previous lucide stroke icons triggered a
+// GPU tile-corruption bug in Chrome on Android (Mali/PowerVR devices),
+// isolated experimentally via the debug/wwf-isolation branch harness —
+// this icon-less rendering (its "phase 9") is confirmed stable on the
+// affected devices. Reintroduce icons only with an implementation verified
+// against that harness.
 const CATEGORIES = [
-  { icon: Gift, label: "Unclaimed airdrops" },
-  { icon: Coins, label: "Staking rewards" },
-  { icon: Sprout, label: "Vesting schedules" },
-  { icon: Landmark, label: "Governance rewards" },
-  { icon: Ticket, label: "Presale allocations" },
-  { icon: Wallet, label: "NFT claims" },
-  { icon: ReceiptText, label: "Refunds" },
-  { icon: PiggyBank, label: "Forgotten balances" },
+  "Unclaimed airdrops",
+  "Staking rewards",
+  "Vesting schedules",
+  "Governance rewards",
+  "Presale allocations",
+  "NFT claims",
+  "Refunds",
+  "Forgotten balances",
 ];
 
 export function WhatWeFind() {
@@ -35,13 +30,12 @@ export function WhatWeFind() {
           </p>
         </div>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {CATEGORIES.map((c) => (
+          {CATEGORIES.map((label) => (
             <li
-              key={c.label}
+              key={label}
               className="border-border bg-background hover:border-border/60 hover:bg-accent/40 flex items-center gap-3 rounded-xl border p-4 transition-colors"
             >
-              <c.icon className="text-muted-foreground size-5 shrink-0" aria-hidden="true" />
-              <span className="text-sm font-medium">{c.label}</span>
+              <span className="text-sm font-medium">{label}</span>
             </li>
           ))}
         </ul>
