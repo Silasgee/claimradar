@@ -22,7 +22,7 @@ const CATEGORIES = [
 
 export function WhatWeFind() {
   return (
-    <section className="border-border bg-card/30 border-y">
+    <section className="border-border bg-card-tint border-y">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="mb-10 max-w-2xl">
           <p className="text-brand text-sm font-medium">What we surface</p>

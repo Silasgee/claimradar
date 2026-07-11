@@ -135,6 +135,16 @@
 }
 
 @layer utilities {
+  /* Opaque stand-in for `bg-card/30`. A viewport-wide translucent background
+     forces the compositor to alpha-blend that whole tile region on every
+     frame, which corrupts (garbled/duplicated tiles) in Chrome Android's
+     GPU raster path on some Mali/PowerVR devices. The section only ever sits
+     on the solid page background, so pre-mixing the two colors renders
+     identically without any transparency. */
+  .bg-card-tint {
+    background-color: #0c0c0c;
+    background-color: color-mix(in srgb, var(--card) 30%, var(--background));
+  }
   /* Faint dotted field used behind the hero — very low contrast, not flashy. */
   .bg-dot-grid {
     background-image: radial-gradient(circle at center, var(--border) 1px, transparent 1px);
