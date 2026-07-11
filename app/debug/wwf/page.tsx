@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import type { CSSProperties, ComponentType } from "react";
+import type { CSSProperties, ComponentType, ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import {
   Coins,
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const CATEGORIES = [
+const CATEGORIES: { icon: LucideIcon; label: string }[] = [
   { icon: Gift, label: "Unclaimed airdrops" },
   { icon: Coins, label: "Staking rewards" },
   { icon: Sprout, label: "Vesting schedules" },
@@ -70,7 +71,20 @@ const PHASES: Record<number, string> = {
   11: "+ section border-y",
   12: "+ opaque section tint (bg-card-tint) — CURRENT PRODUCTION component",
   13: "+ ORIGINAL translucent bg-card/30 (pre-fix version, regression reference)",
+  // SVG feature isolation (run 2). Identical to phase 10 except ONE icon
+  // property per phase. 10 = corrupt control, 9 = clean control.
+  14: "SVG: lucide at NATIVE 24px (size-6) — no fractional scaling, stroke stays 2.0px",
+  15: "SVG: lucide at size-5 with strokeWidth 2.4 — scaled stroke lands on 2.0 device px",
+  16: "SVG: lucide at size-5 with strokeLinecap=butt / strokeLinejoin=miter — no round caps",
+  17: "SVG: lucide at size-5 with vector-effect: non-scaling-stroke — stroke in screen space",
+  18: "SVG: lucide at size-5 with explicit stroke color — no currentColor",
+  19: "SVG: minimal STROKED circle (one <circle>, stroke 2, round) at size-5",
+  20: "SVG: FILLED circle (fill=currentColor, NO stroke) at size-5",
+  21: "NO SVG: CSS circle (span, 2px border-radius ring) at size-5",
+  22: "NO SVG: plain Unicode character (◆)",
 };
+
+const SVG_RUN = [9, 10, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
 function StyledCard({
   label,
@@ -126,7 +140,143 @@ function GridSection({
   );
 }
 
+/** Same grid as phase 10, but the icon slot is fully controlled per phase. */
+function IconGrid({
+  iconFor,
+  wrapper,
+}: {
+  iconFor: (c: LucideIcon) => ReactNode;
+  wrapper?: string;
+}) {
+  return (
+    <section {...(wrapper ? { "data-exp": wrapper } : {})}>
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <HeaderBlock />
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {CATEGORIES.map((c) => (
+            <li
+              key={c.label}
+              className="border-border bg-background hover:border-border/60 hover:bg-accent/40 flex items-center gap-3 rounded-xl border p-4 transition-colors"
+            >
+              {iconFor(c.icon)}
+              <span className="text-sm font-medium">{c.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function SvgExperiment({ n }: { n: number }) {
+  switch (n) {
+    case 14:
+      return (
+        <IconGrid
+          iconFor={(Icon) => <Icon className="text-muted-foreground size-6 shrink-0" aria-hidden />}
+        />
+      );
+    case 15:
+      return (
+        <IconGrid
+          iconFor={(Icon) => (
+            <Icon className="text-muted-foreground size-5 shrink-0" strokeWidth={2.4} aria-hidden />
+          )}
+        />
+      );
+    case 16:
+      return (
+        <IconGrid
+          iconFor={(Icon) => (
+            <Icon
+              className="text-muted-foreground size-5 shrink-0"
+              strokeLinecap="butt"
+              strokeLinejoin="miter"
+              aria-hidden
+            />
+          )}
+        />
+      );
+    case 17:
+      return (
+        <>
+          <style>{`[data-exp="nss"] svg * { vector-effect: non-scaling-stroke; }`}</style>
+          <IconGrid
+            wrapper="nss"
+            iconFor={(Icon) => (
+              <Icon className="text-muted-foreground size-5 shrink-0" aria-hidden />
+            )}
+          />
+        </>
+      );
+    case 18:
+      return (
+        <IconGrid
+          iconFor={(Icon) => <Icon className="size-5 shrink-0" stroke="#a6a6a6" aria-hidden />}
+        />
+      );
+    case 19:
+      return (
+        <IconGrid
+          iconFor={() => (
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground size-5 shrink-0"
+              aria-hidden
+            >
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+          )}
+        />
+      );
+    case 20:
+      return (
+        <IconGrid
+          iconFor={() => (
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="text-muted-foreground size-5 shrink-0"
+              aria-hidden
+            >
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+          )}
+        />
+      );
+    case 21:
+      return (
+        <IconGrid
+          iconFor={() => (
+            <span
+              className="text-muted-foreground size-5 shrink-0 rounded-full border-2 border-current"
+              aria-hidden
+            />
+          )}
+        />
+      );
+    case 22:
+      return (
+        <IconGrid
+          iconFor={() => (
+            <span className="text-muted-foreground shrink-0 text-sm" aria-hidden>
+              ◆
+            </span>
+          )}
+        />
+      );
+    default:
+      return null;
+  }
+}
+
 function Phase({ n }: { n: number }) {
+  if (n >= 14) return <SvgExperiment n={n} />;
   switch (n) {
     case 1:
       return (
@@ -220,16 +370,20 @@ export default async function WwfIsolationPage({
   searchParams: Promise<{ phase?: string }>;
 }) {
   const { phase } = await searchParams;
-  const ids = Object.keys(PHASES).map(Number);
+  const ids = phase === "svg" ? SVG_RUN : Object.keys(PHASES).map(Number);
 
-  if (phase === "all") {
+  if (phase === "all" || phase === "svg") {
     return (
       <div>
         <div style={{ fontFamily: "monospace", fontSize: 13, padding: 16 }}>
-          <strong>Isolation run — scroll slowly to the bottom.</strong> Note the FIRST phase number
-          where any corruption (duplicated text, garbled tiles, artifacts) appears, and whether it
-          persists in later phases. Filler blocks separate phases so each starts near a fresh
-          viewport.
+          <strong>
+            {phase === "svg"
+              ? "SVG feature isolation — phase 9 must stay clean, phase 10 must corrupt (controls). Note which of phases 14–22 corrupt and which are clean."
+              : "Isolation run — scroll slowly to the bottom."}
+          </strong>{" "}
+          Note the FIRST phase number where any corruption (duplicated text, garbled tiles,
+          artifacts) appears, and whether it persists in later phases. Filler blocks separate phases
+          so each starts near a fresh viewport.
         </div>
         {ids.map((n) => (
           <div key={n}>
@@ -271,9 +425,10 @@ export default async function WwfIsolationPage({
     <div style={{ fontFamily: "monospace", fontSize: 14, padding: 24, lineHeight: 1.7 }}>
       <h1 style={{ fontSize: 18, fontWeight: 700 }}>WWF rendering isolation</h1>
       <p style={{ marginTop: 8 }}>
-        Open <Link href="/debug/wwf?phase=all">?phase=all</Link> on the affected device and scroll
-        to the bottom. The first phase that corrupts is the trigger. Retest any single phase in
-        isolation via the links below.
+        Run 1: <Link href="/debug/wwf?phase=all">?phase=all</Link> (component bisection). Run 2:{" "}
+        <Link href="/debug/wwf?phase=svg">?phase=svg</Link> (SVG feature isolation — controls 9/10
+        plus one icon variable per phase). The first phase that corrupts is the trigger. Retest any
+        single phase in isolation via the links below.
       </p>
       <ol style={{ marginTop: 16, listStyle: "decimal", paddingLeft: 24 }}>
         {ids.map((n) => (
