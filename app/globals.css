@@ -1,50 +1,75 @@
 @import "tailwindcss";
 
+/*
+ * ClaimRadar design system — dark-first, restrained, Linear/Vercel-adjacent.
+ * Mostly monochrome (white primary on near-black), with semantic status colors
+ * reserved for meaning (claimable / expiring / claimed / expired). No flashy
+ * gradients; a single faint brand hue is used only for focus + accents.
+ */
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+
+  /* Neutral surfaces (dark is the default, designed experience). */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.181 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.181 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+
+  /* Primary = near-white (Vercel-style high-contrast buttons). */
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.145 0 0);
+
+  --secondary: oklch(0.235 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.235 0 0);
+  --muted-foreground: oklch(0.724 0 0);
+  --accent: oklch(0.24 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+
+  --destructive: oklch(0.62 0.21 25.5);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.72 0.11 264);
+
+  /* Brand accent — used sparingly (focus glow, logo mark, links). */
+  --brand: oklch(0.72 0.11 264);
+  --brand-foreground: oklch(0.98 0 0);
+
+  /* Semantic status colors (foreground text + subtle bg tints). */
+  --success: oklch(0.75 0.15 156);
+  --success-bg: oklch(0.75 0.15 156 / 12%);
+  --warning: oklch(0.82 0.13 82);
+  --warning-bg: oklch(0.82 0.13 82 / 12%);
+  --danger: oklch(0.7 0.19 25);
+  --danger-bg: oklch(0.7 0.19 25 / 12%);
+  --info: oklch(0.72 0.12 250);
+  --info-bg: oklch(0.72 0.12 250 / 12%);
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+.light {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.16 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0 0);
+  --primary: oklch(0.2 0 0);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.2 0 0);
+  --border: oklch(0.15 0 0 / 10%);
+  --input: oklch(0.15 0 0 / 15%);
 }
 
 @theme inline {
@@ -67,17 +92,77 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+  /* Consistent, on-brand focus treatment. */
+  :focus-visible {
+    @apply ring-ring/70 ring-offset-background ring-2 ring-offset-2 outline-none;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--brand) 30%, transparent);
+  }
+}
+
+@layer utilities {
+  /* Faint dotted field used behind the hero — very low contrast, not flashy. */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle at center, var(--border) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  @keyframes cr-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-up {
+    animation: cr-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

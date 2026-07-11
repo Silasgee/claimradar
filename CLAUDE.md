@@ -45,7 +45,20 @@ Milestones 0 (foundation), 1 (scan engine), 2 (Ethereum connector), and 3
   allow-list). Never repair invalid claims — drop them. See docs/DISCOVERY_ENGINE.md,
   docs/CLAIM_MODEL.md, docs/CONNECTOR_SDK.md.
 
+## Frontend (MVP)
+
+- Pages: `/` (landing), `/scan` (live progress), `/results` (ranked claims). Scan/results
+  are client components in Suspense; the landing is server-first with client islands.
+- The UI holds NO business logic — it calls `POST /api/scan` (which runs the Discovery
+  Engine) via `lib/api/scan-client.ts` and maps outcomes to states. Report is cached in
+  sessionStorage; recent-scan history in localStorage (`lib/history.ts`). No auth.
+- Design: dark-first, near-monochrome + semantic status colors, Geist fonts, hand-authored
+  shadcn-style primitives in `components/ui`. Keep motion subtle; maintain AA contrast and
+  Lighthouse ≥ 95 all categories. See `docs/UI.md`.
+- Component tests use jsdom (`// @vitest-environment jsdom`) + Testing Library; assert
+  post-interaction state with async `findBy*`.
+
 ## Docs
 
-Full blueprint: `docs/ARCHITECTURE.md`. Scan engine: `docs/SCAN-ENGINE.md`.
-Update them when architecture changes.
+Full blueprint: `docs/ARCHITECTURE.md`. Scan engine: `docs/SCAN-ENGINE.md`. Discovery:
+`docs/DISCOVERY_ENGINE.md`. Frontend: `docs/UI.md`. Update them when architecture changes.

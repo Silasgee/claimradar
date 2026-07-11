@@ -7,12 +7,13 @@ wallet address and the platform checks multiple chains and protocols for unclaim
 airdrops, claimable staking rewards, vesting schedules, presale allocations, governance
 rewards, NFT claims, refunds, and other forgotten on-chain assets.
 
-**Current state: Milestone 3 — Discovery Engine.** Foundation (M0), the Claim Scan Engine
-(M1), the Ethereum connector (M2), and now the **Discovery Engine**: a discovery-connector
-SDK, the canonical `Claim` model with stable ids, deterministic ranking, claim-URL security,
-and a first production discovery connector (a Merkle Distributor airdrop) — all proven with
-mocked-transport tests. See the blueprint and engine docs:
+**Current state: MVP — a usable product.** The full engine stack (Milestones 0–3) plus a
+production-quality web app: paste a wallet address, watch a live scan, and get a ranked,
+explainable list of claim opportunities. Dark-first, responsive, accessible; Lighthouse
+100/100/100/100 (performance / accessibility / best-practices / SEO). See
+[docs/UI.md](docs/UI.md) for the frontend architecture and the blueprint/engine docs below:
 
+- [docs/UI.md](docs/UI.md) — frontend architecture, scanning flow, screens
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — full technical blueprint
 - [docs/DISCOVERY_ENGINE.md](docs/DISCOVERY_ENGINE.md) — the Discovery Engine (heart of the product)
 - [docs/CLAIM_MODEL.md](docs/CLAIM_MODEL.md) — the canonical Claim specification
@@ -60,8 +61,10 @@ Request → app/api (route handlers, wrapped: request-id, logging, error mapping
 
 ```
 app/                # Next.js App Router: pages + API routes
-  api/health/       # liveness endpoint
-components/ui/      # shadcn/ui components
+  page.tsx          # landing (hero, scan form, sections)
+  scan/ results/    # scan progress + results experiences
+  api/              # scan, connectors, health, internal/metrics
+components/         # UI: site chrome, home/scan/results sections, ui/ primitives
 config/             # environment validation (zod) — the only place process.env is read
 connectors/         # Connector SDK: interface, context, errors, registry + connectors
   ethereum/         # EthereumConnector: native ETH + curated ERC-20 balances (viem)
@@ -79,8 +82,9 @@ lib/                # shared infrastructure
   metrics/          # shared duration-stats primitive
   scan/             # Claim Scan Engine: ScanService, ConnectorRuntime, metrics
 prisma/             # schema + migrations
-tests/              # unit tests (Vitest)
-types/              # core domain vocabulary (Chain, Claimable, ScanRequest, …)
+scripts/            # dev utilities (screenshots)
+tests/              # unit + component tests (Vitest; component tests use jsdom)
+types/              # core domain vocabulary (Chain, Claim/Claimable, requests, …)
 ```
 
 Planned-but-not-yet-present folders from the blueprint: `workers/` (background jobs) and

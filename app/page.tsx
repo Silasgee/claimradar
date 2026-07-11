@@ -1,32 +1,82 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ShieldCheck } from "lucide-react";
 
-export default function Home() {
+import { Features } from "@/components/home/features";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { RecentScans } from "@/components/home/recent-scans";
+import { WhatWeFind } from "@/components/home/what-we-find";
+import { WalletScanForm } from "@/components/scan/wallet-scan-form";
+
+const TRUST_POINTS = [
+  "No wallet connection",
+  "No signatures",
+  "No private keys",
+  "Public data only",
+];
+
+export default function HomePage() {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-24">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <Badge variant="secondary">Milestone 0 — Foundation</Badge>
-        <h1 className="text-4xl font-semibold tracking-tight">ClaimRadar</h1>
-        <p className="text-muted-foreground max-w-md text-lg">
-          Discover forgotten Web3 assets by scanning any public wallet address.
-        </p>
+    <>
+      {/* Hero */}
+      <section id="scan" className="border-border relative overflow-hidden border-b">
+        <div
+          className="bg-dot-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] opacity-[0.5]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute top-[-10%] left-1/2 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
+          style={{ background: "radial-gradient(closest-side, var(--brand), transparent)" }}
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center px-4 pt-20 pb-20 text-center sm:px-6 sm:pt-28 sm:pb-28">
+          <div className="animate-fade-up border-border bg-card/60 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs backdrop-blur">
+            <span className="relative flex size-1.5">
+              <span className="bg-success absolute inline-flex size-full animate-ping rounded-full opacity-60" />
+              <span className="bg-success relative inline-flex size-1.5 rounded-full" />
+            </span>
+            Read-only Web3 asset recovery
+          </div>
+
+          <h1
+            className="animate-fade-up mt-6 text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-6xl"
+            style={{ animationDelay: "60ms" }}
+          >
+            Find the crypto your
+            <br className="hidden sm:block" /> wallet forgot about
+          </h1>
+
+          <p
+            className="animate-fade-up text-muted-foreground mt-5 max-w-xl text-lg leading-relaxed text-balance"
+            style={{ animationDelay: "120ms" }}
+          >
+            Paste any wallet address to uncover unclaimed airdrops, staking rewards, vesting, and
+            refunds — ranked by value, with a verified link to every official claim.
+          </p>
+
+          <div className="animate-fade-up mt-9 w-full max-w-xl" style={{ animationDelay: "180ms" }}>
+            <WalletScanForm autoFocus />
+          </div>
+
+          <div
+            className="animate-fade-up text-muted-foreground mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs"
+            style={{ animationDelay: "240ms" }}
+          >
+            {TRUST_POINTS.map((point) => (
+              <span key={point} className="inline-flex items-center gap-1.5">
+                <ShieldCheck className="text-success size-3.5" aria-hidden="true" />
+                {point}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="py-14">
+        <RecentScans />
       </div>
 
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Project status</CardTitle>
-          <CardDescription>
-            The platform foundation is in place. Wallet scanning arrives in Milestone 1.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center justify-between">
-          <p className="text-muted-foreground text-sm">Service health</p>
-          <Button asChild variant="outline" size="sm">
-            <a href="/api/health">/api/health</a>
-          </Button>
-        </CardContent>
-      </Card>
-    </main>
+      <HowItWorks />
+      <WhatWeFind />
+      <Features />
+    </>
   );
 }
