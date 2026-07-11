@@ -6,7 +6,11 @@ import { Logo } from "./logo";
 
 export function SiteHeader() {
   return (
-    <header className="border-border/80 bg-background/70 sticky top-0 z-40 border-b backdrop-blur-xl">
+    // No backdrop-filter here: backdrop blur on a sticky element over a
+    // scrolling page is a documented Android/Samsung compositor bug (stale
+    // duplicated tiles, horizontal artifacts). A slightly more opaque
+    // translucent background keeps the look without the filter.
+    <header className="border-border/80 bg-background/85 sticky top-0 z-40 border-b">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="rounded-md" aria-label="AssetRadar home">
           <Logo />

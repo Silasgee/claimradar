@@ -22,9 +22,14 @@ export default function HomePage() {
           className="bg-dot-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black,transparent)] opacity-[0.5]"
           aria-hidden="true"
         />
+        {/* Soft brand glow. Drawn as a plain radial gradient — an equivalent
+            filter: blur() layer triggers GPU compositing corruption (garbled
+            tiles, smearing) on some Android devices, so no filter here. */}
         <div
-          className="pointer-events-none absolute top-[-10%] left-1/2 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
-          style={{ background: "radial-gradient(closest-side, var(--brand), transparent)" }}
+          className="pointer-events-none absolute top-[-10%] left-1/2 h-[420px] w-[720px] -translate-x-1/2 rounded-full opacity-25"
+          style={{
+            background: "radial-gradient(closest-side, var(--brand) 0%, transparent 78%)",
+          }}
           aria-hidden="true"
         />
         <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center px-4 pt-20 pb-20 text-center sm:px-6 sm:pt-28 sm:pb-28">

@@ -30,9 +30,12 @@ const envSchema = z.object({
   REDIS_URL: z.url({ message: "REDIS_URL must be a valid Redis URL" }).optional(),
   /**
    * Canonical public URL of the deployment (used for metadataBase / Open
-   * Graph). Set this to the real production domain on Vercel.
+   * Graph / canonical links). Set this once a real production domain exists.
+   * When unset on Vercel it is derived from the deployment's own URL (see
+   * `resolveSiteUrl`) so share previews never point at a domain we don't
+   * serve; elsewhere it falls back to localhost for development.
    */
-  SITE_URL: z.url().default("https://assetradar.xyz"),
+  SITE_URL: z.url().default("http://localhost:3000"),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   /**
    * Ethereum mainnet RPC endpoint. The public default is fine for local
@@ -56,11 +59,24 @@ export type Env = z.infer<typeof envSchema>;
 let cached: Env | null = null;
 
 /**
+ * The canonical site URL must always be a URL this deployment actually
+ * serves — Open Graph images and canonical links break silently (degraded
+ * WhatsApp/iMessage previews, SEO pointing at a foreign domain) when it
+ * isn't. Explicit SITE_URL wins; otherwise Vercel's injected production /
+ * deployment hostname is used, so no dashboard configuration is required.
+ */
+function resolveSiteUrl(source: NodeJS.ProcessEnv): string | undefined {
+  if (source.SITE_URL) return source.SITE_URL;
+  const vercelHost = source.VERCEL_PROJECT_PRODUCTION_URL ?? source.VERCEL_URL;
+  return vercelHost ? `https://${vercelHost}` : undefined;
+}
+
+/**
  * Validate and return the environment. Throws with a human-readable list of
  * every missing/invalid variable.
  */
 export function validateEnv(source: NodeJS.ProcessEnv = process.env): Env {
-  const result = envSchema.safeParse(source);
+  const result = envSchema.safeParse({ ...source, SITE_URL: resolveSiteUrl(source) });
   if (!result.success) {
     const problems = result.error.issues
       .map((issue) => `  - ${issue.path.join(".") || "(root)"}: ${issue.message}`)

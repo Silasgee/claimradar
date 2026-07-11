@@ -31,6 +31,9 @@ export const metadata: Metadata = {
     "claim checker",
     "crypto airdrop finder",
   ],
+  // "./" resolves against metadataBase + the current route, so every page
+  // emits its own canonical URL.
+  alternates: { canonical: "./" },
   applicationName: SITE.name,
   authors: [{ name: "AssetRadar Labs" }],
   creator: "AssetRadar Labs",
