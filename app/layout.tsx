@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
+import { getEnv } from "@/config/env";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 
@@ -11,7 +12,9 @@ const SITE = {
   name: "AssetRadar",
   description:
     "Discover forgotten Web3 assets. Paste any wallet address to surface unclaimed airdrops, staking rewards, vesting, and refunds across chains — read-only, non-custodial.",
-  url: "https://assetradar.xyz",
+  // Canonical URL comes from SITE_URL so each environment (preview, prod)
+  // emits correct Open Graph / canonical links without a code change.
+  url: getEnv().SITE_URL,
 };
 
 export const metadata: Metadata = {

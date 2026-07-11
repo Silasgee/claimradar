@@ -10,10 +10,29 @@ import { z } from "zod";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  /** PostgreSQL connection string (consumed by Prisma). */
-  DATABASE_URL: z.url({ message: "DATABASE_URL must be a valid PostgreSQL URL" }),
-  /** Redis connection string (consumed by the cache layer). */
-  REDIS_URL: z.url({ message: "REDIS_URL must be a valid Redis URL" }),
+  /**
+   * PostgreSQL connection string (consumed by Prisma).
+   *
+   * OPTIONAL in Phase 1: nothing on the MVP request path persists to the
+   * database (scans are stateless; history is client-local). It becomes
+   * required the day report persistence ships — `getDb()` fails with a clear
+   * error if called without it.
+   */
+  DATABASE_URL: z.url({ message: "DATABASE_URL must be a valid PostgreSQL URL" }).optional(),
+  /**
+   * Redis connection string (consumed by the cache layer).
+   *
+   * OPTIONAL in Phase 1: no production connector uses ctx.cache yet and the
+   * client is lazy, so Redis is never contacted. Becomes required when
+   * connector/report caching is enabled — `getRedis()` fails with a clear
+   * error if called without it.
+   */
+  REDIS_URL: z.url({ message: "REDIS_URL must be a valid Redis URL" }).optional(),
+  /**
+   * Canonical public URL of the deployment (used for metadataBase / Open
+   * Graph). Set this to the real production domain on Vercel.
+   */
+  SITE_URL: z.url().default("https://assetradar.xyz"),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   /**
    * Ethereum mainnet RPC endpoint. The public default is fine for local

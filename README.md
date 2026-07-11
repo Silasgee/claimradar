@@ -126,13 +126,17 @@ npm run dev
 All environment access goes through `config/env.ts`, which validates on server startup and
 fails fast with a precise message. See [.env.example](.env.example) for the template.
 
-| Variable           | Required | Description                                     |
-| ------------------ | -------- | ----------------------------------------------- |
-| `NODE_ENV`         | no       | `development` (default) · `test` · `production` |
-| `DATABASE_URL`     | yes      | PostgreSQL connection string                    |
-| `REDIS_URL`        | yes      | Redis connection string                         |
-| `LOG_LEVEL`        | no       | `fatal`…`trace`, default `info`                 |
-| `ETHEREUM_RPC_URL` | no       | Mainnet RPC; public default for dev only        |
+| Variable           | Required      | Description                                     |
+| ------------------ | ------------- | ----------------------------------------------- |
+| `NODE_ENV`         | no            | `development` (default) · `test` · `production` |
+| `SITE_URL`         | prod only     | Canonical URL for metadata/Open Graph           |
+| `ETHEREUM_RPC_URL` | prod only     | Mainnet RPC; public default is for dev only     |
+| `DATABASE_URL`     | no (Phase 2+) | PostgreSQL; unused until persistence ships      |
+| `REDIS_URL`        | no (Phase 2+) | Redis; unused until caching ships               |
+| `LOG_LEVEL`        | no            | `fatal`…`trace`, default `info`                 |
+
+Phase 1 production deploys (e.g. Vercel) only need `SITE_URL` and a dedicated
+`ETHEREUM_RPC_URL`. The build runs `prisma generate` automatically.
 
 Never commit `.env` — it is gitignored. Deployed environments use a secret manager.
 
