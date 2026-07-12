@@ -44,6 +44,21 @@ const envSchema = z.object({
    */
   ETHEREUM_RPC_URL: z.url().default("https://cloudflare-eth.com"),
   /**
+   * EigenLayer rewards connector (Phase 2) — all OPTIONAL. When any is unset
+   * the connector is inert (discovers nothing) rather than failing, so the
+   * platform runs without EigenLayer configured. Injected into the connector
+   * via `ctx.config`; nothing is hardcoded in connector code.
+   *
+   * - EIGENLAYER_REWARDS_COORDINATOR: the RewardsCoordinator proxy address
+   *   (mainnet: 0x7750d328b314EfFa365A0402CcfD489B80B0adda).
+   * - EIGENLAYER_SIDECAR_URL: base URL of the official EigenLayer sidecar /
+   *   proof service that serves reward proofs.
+   * - EIGENLAYER_CLAIM_URL: the official claim page shown to users.
+   */
+  EIGENLAYER_REWARDS_COORDINATOR: z.string().optional(),
+  EIGENLAYER_SIDECAR_URL: z.url().optional(),
+  EIGENLAYER_CLAIM_URL: z.url().optional(),
+  /**
    * Serve /api/internal/metrics in production. Off by default — in deployed
    * environments the internal API must additionally be network-restricted.
    * Always served outside production.

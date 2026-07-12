@@ -5,9 +5,11 @@
  * connector's internal files.
  */
 export { MerkleDistributorConnector } from "./merkle-distributor/merkle-distributor-connector";
+export { EigenLayerConnector } from "./eigenlayer/eigenlayer-connector";
 
 import { DiscoveryConnectorRegistry } from "@/lib/discovery/registry";
 
+import { EigenLayerConnector } from "./eigenlayer/eigenlayer-connector";
 import { MerkleDistributorConnector } from "./merkle-distributor/merkle-distributor-connector";
 
 /**
@@ -17,5 +19,6 @@ import { MerkleDistributorConnector } from "./merkle-distributor/merkle-distribu
 export function createDefaultDiscoveryRegistry(): DiscoveryConnectorRegistry {
   const registry = new DiscoveryConnectorRegistry();
   registry.register(new MerkleDistributorConnector());
+  registry.register(new EigenLayerConnector());
   return registry;
 }
